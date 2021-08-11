@@ -114,6 +114,7 @@ venv.bak/
 .spyderproject
 .spyproject
 
+*.csv
 # Rope project settings
 .ropeproject
 
