@@ -5,12 +5,12 @@ from fvictorio import main
 
 if __name__ == '__main__':
 
-    workdir = os.getcwd()
-    output = os.path.split(workdir)[0]
-    output = os.path.join(output, 'ouput')
+    root = os.getcwd()
+    origin = os.path.join(root, 'data')
+    output = os.path.join(root, 'output')
     filename = 'contacts.csv'
 
     if not os.path.exists(output):
         os.mkdir(output)
     
-    main('../data', os.path.join(output, filename))
+    main(origin, os.path.join(output, filename))

@@ -1,5 +1,4 @@
-import collections
-import os, re
+import os, re, glob
 import pandas as pd
 import cchardet as chardet
 from tqdm import tqdm
@@ -61,7 +60,7 @@ class Page:
                   'CODIGO POSTAL': (31,35),
                   'LOCALIDAD': (37,56),
                   'PROVINCIA':  (56, -1)}
-                  
+
         for name, (start, finish) in self.mapper.items():
             self.df[name] = self.df['DOMICILIO'].apply(lambda x: x[start:finish])
 
@@ -82,11 +81,10 @@ class Page:
 
 def main(origin, destination):
     
-    filenames = [os.path.join(origin, x) for x in os.listdir(origin)]
-    
+    filenames = glob.glob(origin + '**/**/*.txt')
+
     for file in tqdm(filenames):
         try:
-            print(file)
             data = open_file(file)
             pages = []
             try:
@@ -99,8 +97,6 @@ def main(origin, destination):
                 pages = pages.dropna(subset=['NOMBRE'])
 
                 if os.path.exists(destination):
-                    data = pd.read_csv(destination)
-                    pages = pd.concat([data, pages], axis=0)    
                     pages = pages.drop_duplicates(subset=['CUIT'])
                     pages.to_csv(destination, mode='a', index=False, header=False)
                 else:
@@ -111,4 +107,14 @@ def main(origin, destination):
         except Exception as e:
             print(f"Failed to load {file}. Reason:\n{e}")
 
-    print("Finished")
+    df = pd.read_csv(destination)
+    df = df.drop_duplicates(subset=['CUIT'])
+    df.to_csv(destination, mode='w', index=False)
+    shape = df.shape
+    del df
+    print(f"Finished! {shape[0]} contacts saved.")
+
+
+def get_files(path):
+    glob.glob(path)
+        
